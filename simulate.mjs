@@ -16,33 +16,18 @@ function randomAnswers() {
 function runOneTrial() {
   const answers = randomAnswers();
 
-  // 1. dimension scores
   const dimensionScores = scoring.calculateDimensionScores(
     answers,
     dimensions
   );
 
-  // 2. profile match
   const profileMatchScores = scoring.calculateProfileMatchScores(
     dimensionScores,
     personalities,
     dimensions
   );
 
-  // 3. direct personality scores（可选但你有）
-  const personalityScores = scoring.calculatePersonalityScores(
-    answers,
-    personalities
-  );
-
-  // 4. final
-  const finalScores = scoring.calculateFinalPersonalityScores({
-    personalityScores,
-    profileMatchScores,
-  });
-
-  // 5. 取 top
-  return scoring.getTopPersonalityId(finalScores);
+  return scoring.getTopPersonalityId(profileMatchScores);
 }
 
 // ===== 多轮模拟 =====
@@ -63,3 +48,4 @@ const summary = [...counts.entries()]
   .sort((a, b) => b.count - a.count);
 
 console.table(summary);
+

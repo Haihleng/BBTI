@@ -255,8 +255,8 @@ export function normalizePersonalityScoresTo100(personalityScores = {}) {
 export function calculateFinalPersonalityScores({
   personalityScores = {},
   profileMatchScores = {},
-  personalityWeight = 0.6,
-  profileWeight = 0.4,
+  personalityWeight = 0.2,
+  profileWeight = 0.8,
 }) {
   const finalScores = {};
   const normalizedDirect = normalizePersonalityScoresTo100(personalityScores);

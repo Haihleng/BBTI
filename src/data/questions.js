@@ -12,13 +12,14 @@ export const questions = [
         dimensionWeights: {
           attack: 2,
           confidence: 1,
-          emo_stability: 0,
+          emo_stability: -1,
           physicality: 1,
           energy: 1,
         },
         personalityWeights: {
           foul: 1,
           star: 1,
+          damn: 1,
         },
       },
       {
@@ -29,10 +30,10 @@ export const questions = [
           ball_IQ: 1,
           composure: 1,
           focus: 1,
-          emo_stability: 1,
+          emo_stability: -1,
         },
         personalityWeights: {
-          calm: 1,
+          emoer: 1,
           worker: 1,
         },
       },
@@ -45,7 +46,8 @@ export const questions = [
           ball_IQ: 1,
         },
         personalityWeights: {
-          calm: 2,
+          mymy: 0.5,
+          calper: 1,
         },
       },
       {
@@ -76,7 +78,7 @@ export const questions = [
         key: "A",
         text: { en: "I'm nervous... should I go shoot a little right now?", zh: "紧张啊....要不现在去投俩？" },
         dimensionWeights: {
-          confidence: 0,
+          confidence: -1,
           energy: 1,
           attack: 1,
           emo_stability: -1,
@@ -84,7 +86,7 @@ export const questions = [
         },
         personalityWeights: {
           emoer: 1,
-          star: 1,
+          wbxl: 1,
         },
       },
       {
@@ -97,7 +99,7 @@ export const questions = [
           emo_stability: 0,
         },
         personalityWeights: {
-          calm: 1,
+          star: 1,
         },
       },
       {
@@ -109,8 +111,8 @@ export const questions = [
           energy: -1,
         },
         personalityWeights: {
-          calm: 1,
-          wbxl: 1,
+          lost: 1,
+          hider: 1,
         },
       },
       {
@@ -148,8 +150,7 @@ export const questions = [
           focus: 1,
         },
         personalityWeights: {
-          mom: 1,
-          calm: 1,
+          boss: 1,
         },
       },
       {
@@ -163,7 +164,6 @@ export const questions = [
         },
         personalityWeights: {
           worker: 1,
-          calm: 1,
         },
       },
       {
@@ -210,7 +210,7 @@ export const questions = [
           smoothness: 0,
         },
         personalityWeights: {
-          lost: 1,
+          
         },
       },
       {
@@ -223,7 +223,6 @@ export const questions = [
         },
         personalityWeights: {
           mom: 2,
-          worker: 1,
         },
       },
       {
@@ -236,8 +235,7 @@ export const questions = [
           attack: 1,
         },
         personalityWeights: {
-          moper: 1,
-          star: 1,
+          isoer: 1,
         },
       },
       {
@@ -274,6 +272,7 @@ export const questions = [
         personalityWeights: {
           claper: 2,
           mom: 1,
+          kind: 2,
         },
       },
       {
@@ -287,6 +286,7 @@ export const questions = [
         personalityWeights: {
           calm: 1,
           worker: 1,
+          boss: 1,
         },
       },
       {
@@ -310,8 +310,8 @@ export const questions = [
           energy: -1,
         },
         personalityWeights: {
-          hider: 1,
           lost: 1,
+          deaf: 1,
         },
       },
     ],
@@ -334,7 +334,7 @@ export const questions = [
           attack: 1,
         },
         personalityWeights: {
-          three: 2,
+          three: 3,
           star: 1,
         },
       },
@@ -348,7 +348,7 @@ export const questions = [
           composure: 0,
         },
         personalityWeights: {
-          fake: 1,
+          fake: 2,
         },
       },
       {
@@ -435,7 +435,7 @@ export const questions = [
           composure: 1,
         },
         personalityWeights: {
-          calm: 1,
+          boss: 1,
         },
       },
     ],
@@ -457,8 +457,8 @@ export const questions = [
           composure: 1,
         },
         personalityWeights: {
-          calm: 1,
           worker: 1,
+          foul: 1,
         },
       },
       {
@@ -495,7 +495,7 @@ export const questions = [
           attack: 1,
         },
         personalityWeights: {
-          baner: 1,
+          baner: 4,
           worker: 1,
         },
       },
@@ -554,7 +554,7 @@ export const questions = [
           energy: -1,
         },
         personalityWeights: {
-          calm: 2,
+          hider: 1,
         },
       },
     ],
@@ -590,7 +590,6 @@ export const questions = [
         },
         personalityWeights: {
           foul: 2,
-          sgaer: 1,
         },
       },
       {
@@ -604,6 +603,7 @@ export const questions = [
         personalityWeights: {
           moper: 2,
           worker: 1,
+          foul: 1,
         },
       },
       {
@@ -637,7 +637,7 @@ export const questions = [
           attack: 1,
         },
         personalityWeights: {
-          baner: 2,
+          baner: 3,
           worker: 1,
         },
       },
@@ -650,7 +650,6 @@ export const questions = [
           composure: 1,
         },
         personalityWeights: {
-          calm: 1,
           worker: 1,
         },
       },
@@ -687,9 +686,7 @@ export const questions = [
           shot_making: 1,
         },
         personalityWeights: {
-          baner: 1,
-          worker: 1,
-          sgaer: 1,
+          sgaer: 3,
         },
       },
       {
@@ -728,7 +725,7 @@ export const questions = [
         },
         personalityWeights: {
           lost: 2,
-          oil: 1,
+          oil: 2,
         },
       },
     ],
@@ -750,7 +747,7 @@ export const questions = [
           willingness: -1,
         },
         personalityWeights: {
-          "ISO-er": 2,
+          isoer: 2,
           star: 1,
         },
       },
@@ -763,8 +760,7 @@ export const questions = [
           composure: 1,
         },
         personalityWeights: {
-          calm: 1,
-          fake: 1,
+          fake: 2,
         },
       },
       {
@@ -812,7 +808,7 @@ export const questions = [
         },
         personalityWeights: {
           star: 2,
-          "ISO-er": 1,
+          isoer: 1,
         },
       },
       {
@@ -825,8 +821,7 @@ export const questions = [
           playmaking: 1,
         },
         personalityWeights: {
-          calm: 1,
-          worker: 1,
+  
         },
       },
       {
@@ -839,7 +834,7 @@ export const questions = [
           energy: 1,
         },
         personalityWeights: {
-          sneaker: 2,
+          sneaker: 3,
         },
       },
       {
@@ -913,7 +908,7 @@ export const questions = [
           composure: 0,
         },
         personalityWeights: {
-          wbxl: 1,
+          wbxl: 3,
         },
       },
     ],
@@ -949,7 +944,7 @@ export const questions = [
           willingness: -1,
         },
         personalityWeights: {
-          damn: 1,
+          damn: 3,
           calm: 1,
         },
       },
@@ -976,7 +971,7 @@ export const questions = [
         },
         personalityWeights: {
           mymy: 1,
-          kind: 1,
+          kind: 3,
         },
       },
     ],
