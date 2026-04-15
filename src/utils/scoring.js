@@ -1,15 +1,15 @@
 /**
  * Basketball personality test scoring engine
  *
- * Supports:
- * - question-based personality scoring
- * - question-based dimension scoring
- * - dimension-profile matching against personalities
- * - hybrid final score
+ * Updated for:
+ * - scenario-based questions
+ * - positive / negative dimension weights
+ * - sparse personality profiles
+ * - cleaner result-page dimension display
  */
 
 /**
- * 把任意 score object 补全成完整 key 集合
+ * 创建全 0 的 score object
  */
 function createZeroScoreObject(keys) {
   const obj = {};
@@ -20,24 +20,21 @@ function createZeroScoreObject(keys) {
 }
 
 /**
- * 从 personalities 里拿到所有 personality ids
+ * personalities -> ids
  */
 export function getAllPersonalityIds(personalities = []) {
   return personalities.map((p) => p.id);
 }
 
 /**
- * 从 dimensions object 里拿到所有 dimension keys
+ * dimensions object -> keys
  */
 export function getAllDimensionKeys(dimensions = {}) {
   return Object.keys(dimensions);
 }
 
 /**
- * 计算题目直接带来的 personality 分数
- *
- * answers: [selectedOption, selectedOption, ...]
- * personalities: personalities array
+ * 题目直接累计出来的人格分
  */
 export function calculatePersonalityScores(answers = [], personalities = []) {
   const ids = getAllPersonalityIds(personalities);
@@ -58,10 +55,8 @@ export function calculatePersonalityScores(answers = [], personalities = []) {
 }
 
 /**
- * 计算题目累计出来的 dimension 分数
- *
- * answers: [selectedOption, selectedOption, ...]
- * dimensions: dimensions object
+ * 题目累计出来的 dimension 分数
+ * 支持负权重
  */
 export function calculateDimensionScores(answers = [], dimensions = {}) {
   const dimensionKeys = getAllDimensionKeys(dimensions);
@@ -82,88 +77,121 @@ export function calculateDimensionScores(answers = [], dimensions = {}) {
 }
 
 /**
- * 把 score 转成百分比，适合前端显示
+ * 给结果页展示用：
+ * 把 raw dimension score 映射成 0~100
  *
- * 例如:
- * { attack: 5, defence: 5 } -> { attack: 50, defence: 50 }
+ * 逻辑：
+ * - 先找当前用户所有维度里的最小值 / 最大值
+ * - 做 min-max normalization
+ * - 避免负数导致“总占比”失真
+ *
+ * 适合前端进度条展示
  */
 export function normalize(scores = {}) {
-  const total = Object.values(scores).reduce(
-    (sum, value) => sum + (Number(value) || 0),
-    0
-  );
+  const values = Object.values(scores).map((v) => Number(v) || 0);
+
+  if (!values.length) return {};
+
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
 
   const result = {};
 
   Object.entries(scores).forEach(([key, value]) => {
-    result[key] = total === 0 ? 0 : Math.round(((Number(value) || 0) / total) * 100);
+    const num = Number(value) || 0;
+
+    if (maxValue === minValue) {
+      result[key] = 0;
+    } else {
+      result[key] = Math.round(((num - minValue) / (maxValue - minValue)) * 100);
+    }
   });
 
   return result;
 }
 
 /**
- * 把 raw dimension scores 缩放到 0~1
+ * 给人格匹配用：
+ * 把 raw dimension scores 转成 0~1
  *
- * 用当前用户最高维度作为 1
- * 适合拿去和 personality.profile 比较
- *
- * 例如:
- * { attack: 8, defence: 4 } -> { attack: 1, defence: 0.5 }
+ * 注意：
+ * - 负数不适合直接拿去和 personality.profile 比
+ * - 这里先把负数 clamp 到 0
+ * - 再按当前用户最高正向维度缩放
  */
 export function normalizeDimensionScoresToUnit(scores = {}, dimensions = {}) {
   const dimensionKeys = getAllDimensionKeys(dimensions);
 
-  let maxValue = 0;
+  let maxPositiveValue = 0;
+
   dimensionKeys.forEach((key) => {
     const value = Number(scores[key]) || 0;
-    if (value > maxValue) maxValue = value;
+    const clamped = Math.max(0, value);
+    if (clamped > maxPositiveValue) maxPositiveValue = clamped;
   });
 
   const normalized = {};
+
   dimensionKeys.forEach((key) => {
     const value = Number(scores[key]) || 0;
-    normalized[key] = maxValue === 0 ? 0 : value / maxValue;
+    const clamped = Math.max(0, value);
+    normalized[key] = maxPositiveValue === 0 ? 0 : clamped / maxPositiveValue;
   });
 
   return normalized;
 }
 
 /**
- * 计算用户画像和某个人格画像之间的“距离”
+ * 只拿某个人格 profile 里真正定义过的维度来比较
+ *
+ * 例如 personality.profile = { attack: 1, confidence: 0.8 }
+ * 那就只比较这两个维度
+ */
+export function getRelevantProfileKeys(personalityProfile = {}, dimensions = {}) {
+  const validDimensionKeys = new Set(getAllDimensionKeys(dimensions));
+
+  return Object.keys(personalityProfile).filter((key) => validDimensionKeys.has(key));
+}
+
+/**
+ * 计算用户画像和某个人格画像之间的距离
  * 距离越小，越像
  *
- * 默认所有未写到的维度都按 0 处理
+ * 这里只比较人格自己定义过的维度
  */
 export function getProfileDistance(
   userProfile = {},
   personalityProfile = {},
   dimensions = {}
 ) {
-  const dimensionKeys = getAllDimensionKeys(dimensions);
+  const relevantKeys = getRelevantProfileKeys(personalityProfile, dimensions);
+
+  if (!relevantKeys.length) {
+    return {
+      distance: Infinity,
+      comparedKeyCount: 0,
+    };
+  }
 
   let distance = 0;
 
-  dimensionKeys.forEach((key) => {
+  relevantKeys.forEach((key) => {
     const userValue = Number(userProfile[key]) || 0;
     const personalityValue = Number(personalityProfile[key]) || 0;
     distance += Math.abs(userValue - personalityValue);
   });
 
-  return distance;
+  return {
+    distance,
+    comparedKeyCount: relevantKeys.length,
+  };
 }
 
 /**
  * 根据 dimension profile 给所有人格算匹配分
  *
- * 返回:
- * {
- *   star: 83.2,
- *   fake: 71.5,
- *   mom: 42.8
- * }
- *
- * 分数越高越像，范围约 0~100
+ * 分数范围约 0~100
+ * 分数越高越像
  */
 export function calculateProfileMatchScores(
   userDimensionScores = {},
@@ -171,16 +199,26 @@ export function calculateProfileMatchScores(
   dimensions = {}
 ) {
   const userProfile = normalizeDimensionScoresToUnit(userDimensionScores, dimensions);
-  const dimensionKeys = getAllDimensionKeys(dimensions);
-  const maxDistance = dimensionKeys.length || 1;
-
   const matchScores = {};
 
   personalities.forEach((personality) => {
     const personalityProfile = personality.profile || {};
-    const distance = getProfileDistance(userProfile, personalityProfile, dimensions);
+    const { distance, comparedKeyCount } = getProfileDistance(
+      userProfile,
+      personalityProfile,
+      dimensions
+    );
 
+    if (comparedKeyCount === 0 || distance === Infinity) {
+      matchScores[personality.id] = 0;
+      return;
+    }
+
+    // 最大距离 = comparedKeyCount * 1
+    // 因为每个维度都在 0~1 范围内，单维最大差值是 1
+    const maxDistance = comparedKeyCount;
     const similarity = ((maxDistance - distance) / maxDistance) * 100;
+
     matchScores[personality.id] = Math.max(0, Number(similarity.toFixed(1)));
   });
 
@@ -190,7 +228,8 @@ export function calculateProfileMatchScores(
 /**
  * 把直接人格分归一化到 0~100
  *
- * 最高分人格记为 100，其他按比例缩放
+ * 注意：
+ * 如果所有人格 direct score 都是 0，则全部返回 0
  */
 export function normalizePersonalityScoresTo100(personalityScores = {}) {
   const values = Object.values(personalityScores).map((v) => Number(v) || 0);
@@ -210,7 +249,7 @@ export function normalizePersonalityScoresTo100(personalityScores = {}) {
  * 1. 题目直接加出来的人格分
  * 2. dimension-profile 匹配分
  *
- * 默认 profile 比重更高一点
+ * 默认 profile 比重更高
  */
 export function calculateFinalPersonalityScores({
   personalityScores = {},
@@ -256,13 +295,7 @@ export function getTopPersonalityId(scores = {}) {
 }
 
 /**
- * 返回按分数从高到低排序的人格结果
- *
- * 例如:
- * [
- *   { id: "star", score: 91.2 },
- *   { id: "fake", score: 78.4 }
- * ]
+ * 分数从高到低排序
  */
 export function sortScoresDescending(scores = {}) {
   return Object.entries(scores)
@@ -274,18 +307,7 @@ export function sortScoresDescending(scores = {}) {
 }
 
 /**
- * 一次性跑完整套逻辑
- *
- * 返回：
- * {
- *   personalityScores,
- *   dimensionScores,
- *   dimensionPercentages,
- *   profileMatchScores,
- *   finalScores,
- *   sortedFinalScores,
- *   topId
- * }
+ * 一次性跑完整套 scoring
  */
 export function runFullScoring({
   answers = [],
@@ -296,6 +318,8 @@ export function runFullScoring({
 }) {
   const personalityScores = calculatePersonalityScores(answers, personalities);
   const dimensionScores = calculateDimensionScores(answers, dimensions);
+
+  // 这个是给前端结果页进度条展示用
   const dimensionPercentages = normalize(dimensionScores);
 
   const profileMatchScores = calculateProfileMatchScores(
@@ -326,8 +350,10 @@ export function runFullScoring({
 }
 
 /**
- * 可选：给结果页用的解释函数
- * 返回某个人格最接近用户的前几个维度
+ * 给结果页解释用：
+ * 找某个人格和用户最接近的几个维度
+ *
+ * 这里只比较 personality.profile 里真正写过的维度
  */
 export function getTopMatchingDimensionsForPersonality(
   userDimensionScores = {},
@@ -337,9 +363,9 @@ export function getTopMatchingDimensionsForPersonality(
 ) {
   const userProfile = normalizeDimensionScoresToUnit(userDimensionScores, dimensions);
   const profile = personality.profile || {};
-  const dimensionKeys = getAllDimensionKeys(dimensions);
+  const relevantKeys = getRelevantProfileKeys(profile, dimensions);
 
-  const matches = dimensionKeys.map((key) => {
+  const matches = relevantKeys.map((key) => {
     const userValue = Number(userProfile[key]) || 0;
     const personalityValue = Number(profile[key]) || 0;
     const gap = Math.abs(userValue - personalityValue);

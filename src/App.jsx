@@ -9,9 +9,19 @@ import { teammateMatches } from "./data/teammateMatches";
 import {
   calculatePersonalityScores,
   calculateDimensionScores,
+  calculateProfileMatchScores,
+  calculateFinalPersonalityScores,
   getTopPersonalityId,
   normalize,
 } from "./utils/scoring";
+
+const featuredDimensionKeys = [
+  "attack",
+  "playmaking",
+  "composure",
+  "confidence",
+  "willingness",
+];
 
 function PageShell({ children }) {
   return (
@@ -72,7 +82,7 @@ function Pill({ children, active = false, color = "#5a86ff", bg = "#eef4ff", sty
 
 function ScoreBar({ label, value, color }) {
   return (
-    <div style={{ marginBottom: 26 }}>
+    <div style={{ marginBottom: 24 }}>
       <div
         style={{
           display: "flex",
@@ -157,16 +167,32 @@ export default function App() {
   };
 
   const personalityScores = useMemo(
-    () => calculatePersonalityScores(answers),
+    () => calculatePersonalityScores(answers, personalities),
     [answers]
   );
 
   const dimensionScores = useMemo(
-    () => calculateDimensionScores(answers),
+    () => calculateDimensionScores(answers, dimensions),
     [answers]
   );
 
   const dimensionPercent = useMemo(() => normalize(dimensionScores), [dimensionScores]);
+
+  const profileMatchScores = useMemo(
+    () => calculateProfileMatchScores(dimensionScores, personalities, dimensions),
+    [dimensionScores]
+  );
+
+  const finalScores = useMemo(
+    () =>
+      calculateFinalPersonalityScores({
+        personalityScores,
+        profileMatchScores,
+        personalityWeight: 0.4,
+        profileWeight: 0.6,
+      }),
+    [personalityScores, profileMatchScores]
+  );
 
   function handleSelect(option) {
     const next = [...answers];
@@ -176,6 +202,7 @@ export default function App() {
 
   function handleNext() {
     if (!selected) return;
+
     if (current < questions.length - 1) {
       setCurrent(current + 1);
     } else {
@@ -194,80 +221,107 @@ export default function App() {
   }
 
   if (showResult) {
-    const topId = getTopPersonalityId(personalityScores);
+    const topId = getTopPersonalityId(finalScores);
     const result = personalities.find((p) => p.id === topId);
     const teammate = teammateMatches[topId];
 
     const theme = categoryStyles[result?.category] || {
-      color: result?.color || "#5a86ff",
-      bg: result?.bg || "#eef4ff",
+      color: "#5a86ff",
+      bg: "#eef4ff",
     };
 
-    const tags = result?.tags?.[lang] || result?.traits?.[lang] || [];
     const displayName = result?.name?.[lang] || result?.name?.zh || result?.name?.en;
     const displayOneLiner =
       result?.oneLiner?.[lang] || result?.oneLiner?.zh || result?.oneLiner?.en;
     const displayDesc =
       result?.desc?.[lang] || result?.desc?.zh || result?.desc?.en || displayOneLiner;
+    const keywords = result?.keywords?.[lang] || [];
     const resultColor = theme.color;
     const resultBg = theme.bg;
+
+    const featuredDimensions = featuredDimensionKeys
+      .filter((key) => dimensions[key])
+      .map((key) => ({
+        key,
+        label: dimensions[key][lang],
+        value: dimensionPercent[key] || 0,
+      }));
 
     return (
       <PageShell>
         <div
           style={{
-                position: "relative",
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                textAlign: "center",
-                gap: 16,
+            position: "relative",
+            width: "100%",
+            paddingTop: 12,
+            paddingBottom: 8,
+            marginBottom: 16,
           }}
         >
-          <div style={{ textAlign: "center" }}>
+          <button
+            onClick={() => setLang(lang === "en" ? "zh" : "en")}
+            style={{
+              position: "absolute",
+              right: 0,
+              top: 0,
+              border: `1px solid ${resultColor}33`,
+              background: "#fff",
+              color: resultColor,
+              borderRadius: 999,
+              padding: "12px 18px",
+              fontWeight: 700,
+              fontSize: 14,
+              cursor: "pointer",
+              boxShadow: "0 6px 20px rgba(16,24,40,0.04)",
+            }}
+          >
+            {lang === "en" ? "切换到中文" : "Switch to English"}
+          </button>
+
+          <div
+            style={{
+              maxWidth: 720,
+              margin: "0 auto",
+              textAlign: "center",
+            }}
+          >
             <div
               style={{
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: 800,
                 color: resultColor,
-                letterSpacing: "0.06em",
+                letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                marginBottom: 8,
+                marginBottom: 14,
               }}
             >
               UNCCWBA Personality Result
             </div>
+
             <h1
               style={{
                 margin: 0,
-                fontSize: 34,
+                fontSize: 48,
                 lineHeight: 1.1,
                 fontWeight: 900,
                 color: "#101828",
+                marginBottom: 16,
               }}
             >
               {lang === "en" ? "Your Basketball Identity" : "你的篮球人格结果"}
             </h1>
-          </div>
 
-          <button
+            <p
               style={{
-                position: "absolute",
-                right: 0,
-                top: 0,
-                border: `1px solid ${currentCategoryStyle.color}33`,
-                background: "#fff",
-                color: currentCategoryStyle.color,
-                borderRadius: 999,
-                padding: "12px 18px",
-                fontWeight: 700,
-                fontSize: 14,
-                cursor: "pointer",
-  }}
->
-            {lang === "en" ? "切换到中文" : "Switch to English"}
-          </button>
+                margin: 0,
+                fontSize: 16,
+                lineHeight: 1.9,
+                color: "#667085",
+              }}
+            >
+              {displayDesc}
+            </p>
+          </div>
         </div>
 
         <Card
@@ -335,7 +389,7 @@ export default function App() {
               {displayOneLiner}
             </p>
 
-            {Array.isArray(tags) && tags.length > 0 ? (
+            {Array.isArray(keywords) && keywords.length > 0 ? (
               <div
                 style={{
                   marginTop: 26,
@@ -345,7 +399,7 @@ export default function App() {
                   gap: 12,
                 }}
               >
-                {tags.map((tag) => (
+                {keywords.map((tag) => (
                   <Pill key={tag} color={resultColor} bg="#ffffffcc">
                     {tag}
                   </Pill>
@@ -551,17 +605,17 @@ export default function App() {
             title={lang === "en" ? "Your Style Profile" : "你的风格画像"}
             subtitle={
               lang === "en"
-                ? "A breakdown of how your on-court personality expresses itself."
-                : "从多个维度拆解你在场上的风格倾向。"
+                ? "A small set of key dimensions that best describe your game."
+                : "只展示最关键的几个维度，让风格画像更清晰。"
             }
           />
 
           <div style={{ marginTop: 12 }}>
-            {Object.entries(dimensions).map(([key, d]) => (
+            {featuredDimensions.map((item) => (
               <ScoreBar
-                key={key}
-                label={d[lang]}
-                value={dimensionPercent[key] || 0}
+                key={item.key}
+                label={item.label}
+                value={item.value}
                 color={resultColor}
               />
             ))}
@@ -578,62 +632,26 @@ export default function App() {
       <div style={{ maxWidth: 920, margin: "0 auto" }}>
         <Card
           style={{
-            padding: "34px 30px",
+            padding: "48px 40px 36px",
             background: "linear-gradient(180deg, #f8fbff 0%, #ffffff 100%)",
             border: `1.5px solid ${currentCategoryStyle.color}33`,
           }}
         >
           <div
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: 12,
-              flexWrap: "wrap",
+              position: "relative",
+              width: "100%",
+              paddingTop: 12,
+              paddingBottom: 8,
+              marginBottom: 12,
             }}
           >
-            <div>
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 800,
-                  color: currentCategoryStyle.color,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                  marginBottom: 8,
-                }}
-              >
-                Basketball Personality Test
-              </div>
-              <h1
-                style={{
-                  margin: 0,
-                  fontSize: 36,
-                  lineHeight: 1.1,
-                  fontWeight: 900,
-                  color: "#101828",
-                }}
-              >
-                {lang === "en" ? "Find Your Court Identity" : "找到你的球场人格"}
-              </h1>
-              <p
-                style={{
-                  margin: "14px 0 0",
-                  maxWidth: 620,
-                  fontSize: 16,
-                  lineHeight: 1.8,
-                  color: "#475467",
-                }}
-              >
-                {lang === "en"
-                  ? "Answer a few questions about your instincts, choices, and habits on court. We'll map your basketball personality and playing style."
-                  : "回答几个关于你在场上直觉、选择和习惯的问题，我们会给出你的人格类型与风格画像。"}
-              </p>
-            </div>
-
             <button
               onClick={() => setLang(lang === "en" ? "zh" : "en")}
               style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
                 border: `1px solid ${currentCategoryStyle.color}33`,
                 background: "#fff",
                 color: currentCategoryStyle.color,
@@ -642,10 +660,60 @@ export default function App() {
                 fontWeight: 700,
                 fontSize: 14,
                 cursor: "pointer",
+                boxShadow: "0 6px 20px rgba(16,24,40,0.04)",
               }}
             >
               {lang === "en" ? "切换到中文" : "Switch to English"}
             </button>
+
+            <div
+              style={{
+                maxWidth: 760,
+                margin: "0 auto",
+                textAlign: "center",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 800,
+                  color: currentCategoryStyle.color,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  marginBottom: 14,
+                }}
+              >
+                Basketball Personality Test
+              </div>
+
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: 56,
+                  lineHeight: 1.08,
+                  fontWeight: 900,
+                  color: "#101828",
+                  marginBottom: 20,
+                }}
+              >
+                {lang === "en" ? "Find Your Court Identity" : "找到你的球场人格"}
+              </h1>
+
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 17,
+                  lineHeight: 1.9,
+                  color: "#667085",
+                  maxWidth: 720,
+                  marginInline: "auto",
+                }}
+              >
+                {lang === "en"
+                  ? "Answer a few real-game scenario questions. We'll map your basketball personality and decision style on court."
+                  : "回答一些更贴近真实比赛场景的问题，我们会给出你的人格类型与球场决策风格。"}
+              </p>
+            </div>
           </div>
 
           <div style={{ marginTop: 28 }}>
