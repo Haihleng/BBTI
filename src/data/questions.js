@@ -17,7 +17,7 @@ export const questions = [
           energy: 1,
         },
         personalityWeights: {
-          foul: 1,
+          foul: 3,
           star: 1,
           damn: 1,
         },
@@ -60,7 +60,7 @@ export const questions = [
           focus: -1,
         },
         personalityWeights: {
-          road: 1,
+          road: 5,
           lost: 1,
         },
       },
@@ -86,7 +86,6 @@ export const questions = [
         },
         personalityWeights: {
           emoer: 1,
-          wbxl: 1,
         },
       },
       {
@@ -125,8 +124,8 @@ export const questions = [
           shot_making: 1,
         },
         personalityWeights: {
-          star: 2,
-          three: 1,
+          star: 3,
+          three: 3,
         },
       },
     ],
@@ -150,7 +149,7 @@ export const questions = [
           focus: 1,
         },
         personalityWeights: {
-          boss: 1,
+          boss: 2,
         },
       },
       {
@@ -175,7 +174,7 @@ export const questions = [
           energy: -1,
         },
         personalityWeights: {
-          lost: 1,
+          lost: 2,
           hider: 1,
         },
       },
@@ -210,7 +209,7 @@ export const questions = [
           smoothness: 0,
         },
         personalityWeights: {
-          
+          tofu: 3,
         },
       },
       {
@@ -236,6 +235,7 @@ export const questions = [
         },
         personalityWeights: {
           isoer: 1,
+          three: 2,
         },
       },
       {
@@ -247,8 +247,7 @@ export const questions = [
           smoothness: 0,
         },
         personalityWeights: {
-          lost: 1,
-          wbxl: 1,
+          lost: 2,
         },
       },
     ],
@@ -270,7 +269,7 @@ export const questions = [
           focus: 0,
         },
         personalityWeights: {
-          claper: 2,
+          claper: 3,
           mom: 1,
           kind: 2,
         },
@@ -285,8 +284,7 @@ export const questions = [
         },
         personalityWeights: {
           calm: 1,
-          worker: 1,
-          boss: 1,
+          boss: 3,
         },
       },
       {
@@ -298,7 +296,7 @@ export const questions = [
           willingness: 1,
         },
         personalityWeights: {
-          claper: 1,
+          claper: 3,
           kind: 1,
         },
       },
@@ -311,7 +309,7 @@ export const questions = [
         },
         personalityWeights: {
           lost: 1,
-          deaf: 1,
+          deaf: 2,
         },
       },
     ],
@@ -396,8 +394,8 @@ export const questions = [
           attack: 1,
         },
         personalityWeights: {
-          three: 1,
-          star: 1,
+          three: 4,
+          star: 3,
         },
       },
       {
@@ -407,10 +405,10 @@ export const questions = [
           willingness: 1,
           playmaking: 1,
           attack: -1,
+          confidence: -1,
         },
         personalityWeights: {
-          mom: 1,
-          kind: 1,
+          kind: 2,
         },
       },
       {
@@ -422,8 +420,8 @@ export const questions = [
           confidence: 1,
         },
         personalityWeights: {
-          star: 1,
-          fake: 1,
+          star: 2,
+          fake: 2,
         },
       },
       {
@@ -435,7 +433,7 @@ export const questions = [
           composure: 1,
         },
         personalityWeights: {
-          boss: 1,
+          boss: 3,
         },
       },
     ],
@@ -458,7 +456,7 @@ export const questions = [
         },
         personalityWeights: {
           worker: 1,
-          foul: 1,
+          foul: 2,
         },
       },
       {
@@ -470,8 +468,7 @@ export const questions = [
           energy: 1,
         },
         personalityWeights: {
-          mymy: 2,
-          emoer: 1,
+          mymy: 3,
         },
       },
       {
@@ -482,8 +479,8 @@ export const questions = [
           smoothness: 1,
         },
         personalityWeights: {
-          three: 1,
-          star: 1,
+          three: 3,
+          star: 2,
         },
       },
       {
@@ -495,7 +492,7 @@ export const questions = [
           attack: 1,
         },
         personalityWeights: {
-          baner: 4,
+          baner: 6,
           worker: 1,
         },
       },
@@ -517,20 +514,20 @@ export const questions = [
           confidence: 1,
         },
         personalityWeights: {
-          star: 1,
+          star: 3,
           damn: 1,
         },
       },
       {
         key: "B",
-        text: { en: "A little surprised, but happy", zh: "有点意外，但挺爽" },
+        text: { en: "A little surprised, but happy", zh: "意外，但挺爽" },
         dimensionWeights: {
           confidence: 0,
           emo_stability: 0,
           smoothness: 0,
         },
         personalityWeights: {
-          woc: 2,
+          woc: 3,
         },
       },
       {
@@ -589,7 +586,7 @@ export const questions = [
           physicality: 1,
         },
         personalityWeights: {
-          foul: 2,
+          foul: 4,
         },
       },
       {
@@ -601,9 +598,9 @@ export const questions = [
           energy: 1,
         },
         personalityWeights: {
-          moper: 2,
+          moper: 4,
           worker: 1,
-          foul: 1,
+          foul: 2,
         },
       },
       {
@@ -615,7 +612,7 @@ export const questions = [
           composure: -1,
         },
         personalityWeights: {
-          emoer: 2,
+          emoer: 1,
         },
       },
     ],
@@ -637,8 +634,10 @@ export const questions = [
           attack: 1,
         },
         personalityWeights: {
-          baner: 3,
+          baner: 5,
           worker: 1,
+          moper: 3,
+          jumper: 4,
         },
       },
       {
@@ -686,7 +685,8 @@ export const questions = [
           shot_making: 1,
         },
         personalityWeights: {
-          sgaer: 3,
+          sgaer: 6,
+          moper: 3,
         },
       },
       {
@@ -699,7 +699,7 @@ export const questions = [
         },
         personalityWeights: {
           mom: 1,
-          kind: 1,
+          kind: 2,
         },
       },
       {
@@ -726,6 +726,7 @@ export const questions = [
         personalityWeights: {
           lost: 2,
           oil: 2,
+          tofu: 2,
         },
       },
     ],
@@ -747,8 +748,8 @@ export const questions = [
           willingness: -1,
         },
         personalityWeights: {
-          isoer: 2,
-          star: 1,
+          isoer: 4,
+          star: 2,
         },
       },
       {
@@ -834,7 +835,8 @@ export const questions = [
           energy: 1,
         },
         personalityWeights: {
-          sneaker: 3,
+          sneaker: 6,
+          tofu: 1,
         },
       },
       {
@@ -848,6 +850,7 @@ export const questions = [
         personalityWeights: {
           hider: 2,
           lost: 1,
+          tofu: 1,
         },
       },
     ],
@@ -869,7 +872,7 @@ export const questions = [
           emo_stability: 0,
         },
         personalityWeights: {
-          emoer: 1,
+          isoer: 1,
           hider: 1,
         },
       },
@@ -896,7 +899,6 @@ export const questions = [
         },
         personalityWeights: {
           calm: 1,
-          emoer: 1,
         },
       },
       {
@@ -908,7 +910,7 @@ export const questions = [
           composure: 0,
         },
         personalityWeights: {
-          wbxl: 3,
+          wbxl: 1,
         },
       },
     ],
