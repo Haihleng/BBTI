@@ -122,20 +122,21 @@ export function normalize(scores = {}) {
 export function normalizeDimensionScoresToUnit(scores = {}, dimensions = {}) {
   const dimensionKeys = getAllDimensionKeys(dimensions);
 
-  let maxPositiveValue = 0;
+  const values = dimensionKeys.map((key) => Number(scores[key]) || 0);
 
-  dimensionKeys.forEach((key) => {
-    const value = Number(scores[key]) || 0;
-    const clamped = Math.max(0, value);
-    if (clamped > maxPositiveValue) maxPositiveValue = clamped;
-  });
+  const min = Math.min(...values);
+  const max = Math.max(...values);
 
   const normalized = {};
 
   dimensionKeys.forEach((key) => {
     const value = Number(scores[key]) || 0;
-    const clamped = Math.max(0, value);
-    normalized[key] = maxPositiveValue === 0 ? 0 : clamped / maxPositiveValue;
+
+    if (max === min) {
+      normalized[key] = 0.5; // 全一样 → 中性
+    } else {
+      normalized[key] = (value - min) / (max - min);
+    }
   });
 
   return normalized;
@@ -254,8 +255,8 @@ export function normalizePersonalityScoresTo100(personalityScores = {}) {
 export function calculateFinalPersonalityScores({
   personalityScores = {},
   profileMatchScores = {},
-  personalityWeight = 0.4,
-  profileWeight = 0.6,
+  personalityWeight = 0.6,
+  profileWeight = 0.4,
 }) {
   const finalScores = {};
   const normalizedDirect = normalizePersonalityScoresTo100(personalityScores);
