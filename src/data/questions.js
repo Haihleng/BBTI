@@ -270,8 +270,6 @@ export const questions = [
         },
         personalityWeights: {
           claper: 3,
-          mom: 1,
-          kind: 2,
         },
       },
       {
@@ -297,7 +295,6 @@ export const questions = [
         },
         personalityWeights: {
           claper: 3,
-          kind: 1,
         },
       },
       {
@@ -360,7 +357,6 @@ export const questions = [
         },
         personalityWeights: {
           mom: 1,
-          kind: 1,
         },
       },
       {
@@ -408,7 +404,8 @@ export const questions = [
           confidence: -1,
         },
         personalityWeights: {
-          kind: 2,
+          tofu: 2,
+          hider: 1,
         },
       },
       {
@@ -698,8 +695,7 @@ export const questions = [
           composure: 1,
         },
         personalityWeights: {
-          mom: 1,
-          kind: 2,
+          kind: 1,
         },
       },
       {
@@ -973,7 +969,7 @@ export const questions = [
         },
         personalityWeights: {
           mymy: 1,
-          kind: 3,
+          kind: 1,
         },
       },
     ],
