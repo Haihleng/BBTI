@@ -409,96 +409,64 @@ export default function App() {
           </div>
         </Card>
 
-        {teammate && (
-          <Card style={{ padding: 28, marginTop: 24 }}>
-            <SectionTitle
-              title={lang === "en" ? "Your Team Role" : "你的队内对应角色"}
-              subtitle={
-                lang === "en"
-                  ? "The player archetype you most resemble in a team setting."
-                  : "你在团队比赛里最像的队友类型。"
-              }
-            />
+{teammate && (
+  <Card style={{ padding: 32, marginTop: 24, textAlign: "center" }}>
+    <div
+      style={{
+        fontSize: 18,
+        fontWeight: 800,
+        color: "#344054",
+        marginBottom: 16,
+      }}
+    >
+      {lang === "en"
+        ? "Your UNCCWB personality is:"
+        : "你的 UNCCWB 人格是："}
+    </div>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "190px 1fr",
-                gap: 24,
-                alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  width: "100%",
-                  aspectRatio: "1 / 1",
-                  borderRadius: 28,
-                  background: "#d8dbe2",
-                  overflow: "hidden",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#8a8f98",
-                  fontWeight: 800,
-                  fontSize: 28,
-                  letterSpacing: "0.02em",
-                }}
-              >
-                {teammate.image ? (
-                  <img
-                    src={teammate.image}
-                    alt={teammate.name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
-                ) : (
-                  "Player"
-                )}
-              </div>
+    <div
+      style={{
+        fontSize: 40,
+        fontWeight: 900,
+        marginBottom: 20,
+        color: resultColor,
+      }}
+    >
+      {teammate.name}
+    </div>
 
-              <div>
-                <div
-                  style={{
-                    fontSize: 17,
-                    fontWeight: 800,
-                    color: "#344054",
-                    marginBottom: 10,
-                  }}
-                >
-                  {lang === "en"
-                    ? "Your UNCCWBA personality is:"
-                    : "你的 UNCCWBA 人格是："}{" "}
-                  <span style={{ color: resultColor }}>{teammate.label?.[lang]}</span>
-                </div>
+    <div
+      style={{
+        width: 140,
+        height: 140,
+        margin: "0 auto 20px",
+        borderRadius: "50%",
+        overflow: "hidden",
+        background: "#d8dbe2",
+      }}
+    >
+      {teammate.image ? (
+        <img
+          src={teammate.image}
+          alt={teammate.name}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
+      ) : null}
+    </div>
 
-                <div
-                  style={{
-                    fontSize: 38,
-                    fontWeight: 900,
-                    lineHeight: 1.1,
-                    marginBottom: 14,
-                    color: "#0f172a",
-                  }}
-                >
-                  {teammate.name}
-                </div>
-
-                <p
-                  style={{
-                    margin: 0,
-                    fontSize: 18,
-                    lineHeight: 1.9,
-                    color: "#1f2937",
-                  }}
-                >
-                  {teammate.desc?.[lang]}
-                </p>
-              </div>
-            </div>
-          </Card>
-        )}
+    <p
+      style={{
+        fontSize: 18,
+        lineHeight: 1.8,
+        color: "#1f2937",
+        maxWidth: 520,
+        margin: "0 auto",
+      }}
+    >
+      {teammate.description}
+    </p>
+  </Card>
+)}
 
         <Card
           style={{
