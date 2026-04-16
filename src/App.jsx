@@ -351,30 +351,41 @@ export default function App() {
               {result?.name?.en?.toUpperCase?.() || "RESULT"}
             </Pill>
 
-            <h2
-              style={{
-                margin: 0,
-                fontSize: 54,
-                lineHeight: 1.05,
-                fontWeight: 900,
-                color: "#101828",
-              }}
-            >
-              {displayName}
-            </h2>
+           <div
+  style={{
+    fontSize: 64,
+    lineHeight: 1.02,
+    fontWeight: 900,
+    color: resultColor,
+    letterSpacing: "0.04em",
+    marginBottom: 12,
+  }}
+>
+  {result?.name?.en}
+</div>
 
-            {lang === "zh" && result?.name?.en ? (
-              <div
-                style={{
-                  marginTop: 10,
-                  fontSize: 20,
-                  fontWeight: 800,
-                  color: "#3b4b6b",
-                }}
-              >
-                {result.name.en}
-              </div>
-            ) : null}
+<div
+  style={{
+    fontSize: 28,
+    fontWeight: 800,
+    color: "#1f2937",
+    marginBottom: 6,
+  }}
+>
+  {result?.name?.zh}
+</div>
+
+<div
+  style={{
+    fontSize: 14,
+    color: "#667085",
+    fontWeight: 700,
+    letterSpacing: "0.08em",
+    textTransform: "uppercase",
+  }}
+>
+  {lang === "en" ? "Player Archetype" : "球场人格类型"}
+</div>
 
             <p
               style={{
