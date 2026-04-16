@@ -489,7 +489,7 @@ export const questions = [
           attack: 1,
         },
         personalityWeights: {
-          baner: 6,
+          baner: 4,
           worker: 1,
         },
       },
@@ -631,7 +631,7 @@ export const questions = [
           attack: 1,
         },
         personalityWeights: {
-          baner: 5,
+          baner: 2,
           worker: 1,
           moper: 3,
           jumper: 4,
